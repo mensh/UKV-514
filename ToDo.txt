@@ -1,0 +1,29 @@
+0. Make memory chip configuration
+	0.0. Make dynamic memory allocation(badBlocksList, memoryPageSize, usbPacketSize)
+	0.1. Make dynamic(or configurated) positions of page_time_begin, end, crc8, crc32, ect.
+	0.2. void USB_CORE_0x04(uint8_t* _buf, uint32_t *_len) { // Memory chip info }
+
+1. USB_CORE_ErasePage() { configurationTableAbsent handler}, 
+	1.1. USB_CORE_0x07(uint8_t* _buf, uint32_t *_len) { configurationTableAbsent handler}
+
+2.0 USB_CORE_FillDataTypes(tdData *_pPacket) {make STD += dataType.amount * sizeof(dataType)}
+
+3. Think about BOS Descriptor (usbd_cdc.c and/or usb_ctlreq.c)
+	/*
+	https://chromium.googlesource.com/chromiumos/platform/ec/+/aac88442d7bbc76ec5116fdb3019af09cc522938/chip/stm32/usb.c
+	https://support.microsoft.com/en-us/kb/2973456
+	http://blogs.msdn.com/b/usbcoreblog/archive/2013/04/11/usb-2-1-2-0-1-1-device-enumeration-changes-in-windows-8.aspx
+	http://www.usb.org/developers/presentations/pres1108/SuperSpeed_USB_DevCon_Framework_Ismail.pdf
+	http://libusbx.sourceforge.net/api-1.0/group__desc.html
+	http://www.element14.com/community/servlet/JiveServlet/previewBody/36206-102-2-218482/Introduction%20to%20USB%203.0%20Protocol.pdf
+	*/
+
+4.0 ULPI HS not works( maybe it's bad chip (3340)
+	uint8_t USB_GetDevSpeed(USB_OTG_GlobalTypeDef *USBx)
+		{
+		...
+		else if (((USBx_DEVICE->DSTS & USB_OTG_DSTS_ENUMSPD) == DSTS_ENUMSPD_FS_PHY_30MHZ_OR_60MHZ)||
+							 ((USBx_DEVICE->DSTS & USB_OTG_DSTS_ENUMSPD) == DSTS_ENUMSPD_FS_PHY_48MHZ))
+			speed = USB_OTG_SPEED_FULL;
+		...
+		}

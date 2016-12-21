@@ -1,0 +1,399 @@
+L 1 "..\..\Src\core\counter.c"
+N#include "counter.h"
+L 1 "..\..\Inc\counter.h" 1
+N#ifndef __COUNTER_H_
+N#define __COUNTER_H_
+N
+N
+N
+N/*===============================================================================================*/
+N/*===============================================================================================*/
+N// Comments
+N
+N
+N
+N/*===============================================================================================*/
+N/*===============================================================================================*/
+N// Includes
+N
+N
+N
+N/*===============================================================================================*/
+N/*===============================================================================================*/
+N// Defines
+N
+N
+N
+N
+N/*===============================================================================================*/
+N/*===============================================================================================*/
+N// Data types, structures, ect.
+N
+N
+N
+N/*===============================================================================================*/
+N/*===============================================================================================*/
+N
+N
+N
+N/*===============================================================================================*/
+N/*===============================================================================================*/
+N
+N
+N
+N#endif
+L 2 "..\..\Src\core\counter.c" 2
+N
+N/*#pragma hdrstop
+N#pragma argsused
+N
+N#include <tchar.h>
+N#include <stdio.h>
+N#include <iostream.h>
+N#include <string.h>
+N
+N
+N
+Ntypedef enum
+N	{
+N	none = 0,
+N	plas,
+N	minus,
+N	multiply,
+N	devide,
+N	value,
+N	equal,
+N	notEqual,
+N	less,
+N	more,
+N	and,
+N	or,
+N	powO,
+N	brackets
+N	} tdNodeType;
+N
+Ntypedef struct tdnNnode
+N	{
+N	bool enable;
+N	tdNodeType type;
+N	float value;
+N	tdnNnode *pLeft;
+N	tdnNnode *pRight;
+N	string name;
+N	} tdNode;
+N
+Ntypedef struct
+N	{
+N	string name;
+N	tdNode *pNode;
+N	float counter;
+N	} tdCounter;
+N
+N
+Nfloat checkLeafs(tdNode *_pLeaf)
+N	{
+N	if( _pLeaf == NULL )
+N		return 0.0;
+N
+N	switch( _pLeaf->type )
+N		{
+N		case tdNodeType::equal:
+N			 return checkLeafs( _pLeaf->pLeft ) == checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::notEqual:
+N			 return checkLeafs( _pLeaf->pLeft ) != checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::less:
+N			 return checkLeafs( _pLeaf->pLeft ) < checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::more:
+N			 return checkLeafs( _pLeaf->pLeft ) > checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::plas:
+N			 return checkLeafs( _pLeaf->pLeft ) + checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::minus:
+N			 return checkLeafs( _pLeaf->pLeft ) - checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::multiply:
+N			 return checkLeafs( _pLeaf->pLeft ) * checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::devide:
+N			 return checkLeafs( _pLeaf->pLeft ) / checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::and:
+N			 return checkLeafs( _pLeaf->pLeft ) && checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::or:
+N			 return checkLeafs( _pLeaf->pLeft ) || checkLeafs( _pLeaf->pRight );
+N			 break;
+N
+N		case tdNodeType::value:
+N		default:
+N			 return _pLeaf->value;
+N			 break;
+N
+N		}
+N	return 0.0;
+N	}
+N
+Nfloat checkLeafs2(tdNode *_pLeaf)
+N	{
+N	if( _pLeaf == NULL )
+N		return 0.0;
+N
+N	checkLeafs( _pLeaf->pLeft );
+N	checkLeafs( _pLeaf->pRight );
+N
+N	switch( _pLeaf->type )
+N		{
+N		case tdNodeType::equal:
+N			 _pLeaf->value = _pLeaf->pLeft->value == _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::notEqual:
+N			 _pLeaf->value = _pLeaf->pLeft->value != _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::less:
+N			 _pLeaf->value = _pLeaf->pLeft->value < _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::more:
+N			 _pLeaf->value = _pLeaf->pLeft->value > _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::plas:
+N			 _pLeaf->value = _pLeaf->pLeft->value + _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::minus:
+N			 _pLeaf->value = _pLeaf->pLeft->value - _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::multiply:
+N			 _pLeaf->value = _pLeaf->pLeft->value * _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::devide:
+N			 _pLeaf->value = _pLeaf->pLeft->value / _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::and:
+N			 _pLeaf->value = _pLeaf->pLeft->value && _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::or:
+N			 _pLeaf->value = _pLeaf->pLeft->value || _pLeaf->pRight->value;
+N			 break;
+N
+N		case tdNodeType::value:
+N		default:
+N			 return _pLeaf->value;
+N			 break;
+N
+N		}
+N	return 0.0;
+N	}
+N
+N
+N
+N
+N
+N
+Nvoid parser(const string &_equation, tdNode *_pLeaf)
+N	{
+N	int pos, pos1, pos2;
+N	static int i = 0;
+N	//cout<<i++<<endl;
+N	string oper;
+N	string equation;
+N	string operatorsTxt[] =
+N		{
+N		"+",
+N		"-",
+N		"/",
+N		"*",
+N		"^",
+N		"pow",
+N		"or",
+N		"||",
+N		"and",
+N		"&&",
+N		"equal",
+N		"notequal",
+N		"more",
+N		"less",
+N		"("
+N		")"
+N		};
+N
+N	tdNodeType operatorsTypes[] =
+N		{
+N		tdNodeType::plas,
+N		tdNodeType::minus,
+N		tdNodeType::devide,
+N		tdNodeType::multiply,
+N		tdNodeType::powO,
+N		tdNodeType::or,
+N		tdNodeType::or,
+N		tdNodeType::and,
+N		tdNodeType::and,
+N		tdNodeType::equal,
+N		tdNodeType::notEqual,
+N		tdNodeType::less,
+N		tdNodeType::more,
+N		tdNodeType::brackets,
+N		tdNodeType::brackets
+N		};
+N
+N	if( _equation.length() == 0 )
+N		{
+N		_pLeaf = NULL;
+N		cout<<"NULL"<<endl;
+N		return;
+N		}
+N	cout<<"oh shit"<<endl;
+N	int operatorsAmount = sizeof(operatorsTxt) / sizeof(operatorsTxt[0]);
+N
+N
+N	int len = _equation.length();
+N	for( int i = 0; i < len; i++ )
+N		{
+N		equation += tolower( _equation.at( i ) ) ;
+N		}
+N	//cout<<equation.c_str()<<endl;
+N	if( _pLeaf == NULL )
+N		{
+N		_pLeaf = (tdNode*)malloc(sizeof(tdNode));
+N		_pLeaf->type = tdNodeType::none;
+N		_pLeaf->value = 0.0;
+N		cout<<"New Leaf"<<endl;
+N		}
+N
+N	//cout<<operatorsAmount<<endl;
+N	int k = 0;
+N	while( k < operatorsAmount && equation.empty() == false )
+N		{
+N		oper = operatorsTxt[ k ];
+N		pos = equation.find_first_of( oper );
+N		if( pos != string::npos )
+N			{
+N			cout<<"oh"<<endl;
+N			_pLeaf->type = operatorsTypes[ k ];
+N			parser(equation.substr(0, pos), _pLeaf->pLeft);
+N			parser(equation.substr(pos, equation.length()),  _pLeaf->pRight);
+N			equation.erase(0, pos);
+N			equation.erase(pos, equation.length());
+N			}
+N		k++;
+N		}
+N	if( equation.empty() == false )
+N		{
+N		pos = equation.find_first_of("0123456789");
+N		if( pos != string::npos )
+N			{
+N			_pLeaf->type = tdNodeType::value;
+N			_pLeaf->value = atoi( _equation.c_str() );
+N			}
+N        }
+N
+N	}
+N
+N
+N void checkCounter(tdCounter *_pCounter)
+N	{
+N	if( _pCounter->pNode == NULL )
+N		return;
+N
+N	_pCounter->pNode->value = checkLeafs( _pCounter->pNode );
+N	//checkLeafs2( _pCounter->pNode );
+N
+N
+N	if( _pCounter->pNode->value )
+N	   _pCounter->counter += 1;
+N	}
+N
+N
+N
+NtdCounter Counter;
+NtdNode num23;
+NtdNode numX;
+NtdNode check;
+N
+NtdCounter parsedCounter;
+NtdNode checkParsedCounter;
+N
+Nvoid setCounter(const string &_equation)
+N	{
+N	parsedCounter.name = "parsedCounter";
+N	checkParsedCounter.pLeft = NULL;
+N	checkParsedCounter.pRight = NULL;
+N	parsedCounter.pNode = &checkParsedCounter;
+N
+N	parser(_equation, parsedCounter.pNode);
+N	if( parsedCounter.pNode == NULL )
+N		cout<<"LAL"<<endl;
+N	}
+N
+N
+Nvoid fillCounter(void)
+N	{
+N	num23.name = "num23";
+N	num23.type = tdNodeType::value;
+N	num23.value = 1;
+N	num23.pLeft = NULL;
+N	num23.pRight = NULL;
+N
+N	numX.name = "numX";
+N	numX.type = tdNodeType::value;
+N	numX.value = 23;
+N	numX.pLeft = NULL;
+N	numX.pRight = NULL;
+N
+N	check.name = "check";
+N	check.type = tdNodeType::plas;
+N	check.pLeft = &num23;
+N	check.pRight = &numX;
+N
+N	Counter.name = "Counter 1";
+N	Counter.counter = 0;
+N	Counter.pNode = &check;
+N
+N    }
+N
+Nvoid printCounterValue(tdCounter *_pCounter)
+N	{
+N	cout<<_pCounter->name.c_str()<<endl;
+N	cout<<"pCounter->pNode->value == "<<_pCounter->pNode->value<<endl;
+N	cout<<"Counter == "<<_pCounter->counter<<endl;
+N	cout<<endl;
+N	}
+N
+N
+Nvoid test(void)
+N	{
+N	fillCounter();
+N	checkCounter(&Counter);
+N	printCounterValue(&Counter);
+N
+N	setCounter(" 13 + 6 ");
+N	checkCounter(&parsedCounter);
+N	printCounterValue(&parsedCounter);
+N	};
+N
+Nint _tmain(int argc, _TCHAR* argv[])
+N	{
+N	test();
+N	getchar();
+N	return 0;
+N	}*/

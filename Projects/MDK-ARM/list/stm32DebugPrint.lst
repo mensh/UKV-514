@@ -1,0 +1,112 @@
+L 1 "..\..\Src\stm32DebugPrint.c"
+N#include "stm32DebugPrint.h"
+L 1 "..\..\Inc\stm32DebugPrint.h" 1
+N#ifndef _STM32_DEBUG_PRINT_
+N#define _STM32_DEBUG_PRINT_
+N
+N/*
+NNOTE: You must enable trace: Options for target -> Debug::Settsings -> Trace: set Core Cloc to the value of ProcessFreq and check "Trace Enable";
+N			Also call DWT_Init form  main and define DEBUG_PRINT in sorces or whole project
+N*/
+N
+N#if defined( DEBUG_PRINT )
+X#if 0L
+S	#include "stdio.h"
+S
+S	#define	DWT_CYCCNT    *(volatile unsigned long *)0xE0001004
+S	#define	DWT_CONTROL   *(volatile unsigned long *)0xE0001000
+S	#define	SCB_DEMCR     *(volatile unsigned long *)0xE000EDFC
+S
+S	#define ITM_Port8(n)  (*((volatile unsigned char *)(0xE0000000 + 4 * n)))
+S	#define ITM_Port16(n) (*((volatile unsigned short*)(0xE0000000 + 4 * n)))
+S	#define ITM_Port32(n) (*((volatile unsigned long *)(0xE0000000 + 4 * n)))
+S
+S	#define DEMCR         (*((volatile unsigned long *)(0xE000EDFC)))
+S	#define TRCENA        0x01000000
+S
+S	extern void DWT_Init(void);
+S	extern unsigned int STM32_DEBUG_PRINT_MSG_NUMBER;
+S
+S	#define PRINT(_MSG) 									{ printf(_MSG); printf("\n");}
+S
+S	#define PRINT_VAL(_MSG, _val) 				{ printf(_MSG, _val); printf("\n");}
+S
+S	#define PRINT_BUFFER(_ptrBuffer, _len)	\
+S		int _LEN_ = _len - 1;									\
+S		uint8_t* printBuf = _ptrBuffer;				\
+S		printf("Len: %d", _len);							\
+S		printf("\tBuffer: ");									\
+S		while( _LEN_ )												\
+S			{																		\
+S			printf("%x",*printBuf);							\
+S			printBuf++;													\
+S			_LEN_--;														\
+S			}																		\
+S		printf("\n");
+X	#define PRINT_BUFFER(_ptrBuffer, _len)			int _LEN_ = _len - 1;											uint8_t* printBuf = _ptrBuffer;						printf("Len: %d", _len);									printf("\tBuffer: ");											while( _LEN_ )															{																					printf("%x",*printBuf);										printBuf++;																_LEN_--;																	}																				printf("\n");
+S
+S	#define PRINT_ORDINAL(_MSG) 					{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);	\
+S																					printf(_MSG"\n");																	}
+X	#define PRINT_ORDINAL(_MSG) 					{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);																						printf(_MSG"\n");																	}
+S
+S	#define PRINT_ORDINAL_VAL(_MSG, _val)	{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);	\
+S																					printf(_MSG"\n", _val);														}
+X	#define PRINT_ORDINAL_VAL(_MSG, _val)	{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);																						printf(_MSG"\n", _val);														}
+S
+S	#define PRINT_FUNC 										{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);	\
+S																					printf("Func: %s\n",__FUNCTION__); 						}
+X	#define PRINT_FUNC 										{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);																						printf("Func: %s\n",__FUNCTION__); 						}
+S
+S	#define PRINT_LOCATION 								{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);	\
+S																					printf("File: %s", __FILE__); 									\
+S																					printf("\t Line: %d", __LINE__); 								\
+S																					printf("\t Func: %s\n",__FUNCTION__); 						}
+X	#define PRINT_LOCATION 								{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);																						printf("File: %s", __FILE__); 																														printf("\t Line: %d", __LINE__); 																													printf("\t Func: %s\n",__FUNCTION__); 						}
+S
+S
+S	#define PRINT_LOCATION_AND(_MSG)			{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);	\
+S																					printf("File: %s", __FILE__); 									\
+S																					printf("\t Line: %d", __LINE__); 								\
+S																					printf("\t foo: %s\t",__FUNCTION__); 						\
+S																					printf(_MSG"\n"); 																}
+X	#define PRINT_LOCATION_AND(_MSG)			{ printf("%d. ", STM32_DEBUG_PRINT_MSG_NUMBER++);																						printf("File: %s", __FILE__); 																														printf("\t Line: %d", __LINE__); 																													printf("\t foo: %s\t",__FUNCTION__); 																											printf(_MSG"\n"); 																}
+S
+N#else
+N	#define PRINT(_MSG)
+N	#define PRINT_VAL(_MSG, _val)
+N	#define PRINT_BUFFER(_ptrBuffer, _len)
+N	#define PRINT_ORDINAL(_MSG)
+N	#define PRINT_ORDINAL_VAL(_MSG, _val)
+N	#define PRINT_FUNC
+N	#define PRINT_LOCATION
+N	#define PRINT_LOCATION_AND(_MSG)
+N
+N#endif
+N
+N#endif
+L 2 "..\..\Src\stm32DebugPrint.c" 2
+N
+N#if defined( DEBUG_PRINT )
+X#if 0L
+S/*
+Svoid DWT_Init(void)
+S	{
+S	SCB_DEMCR  	|= 0x01000000;
+S	DWT_CYCCNT   = 0;
+S	DWT_CONTROL	|= 1; // enable the counter
+S	}
+S	*/
+S
+Sint fputc(int ch, FILE *f)
+S	{
+S	if( DEMCR & TRCENA )
+S		{
+S		while( ITM_Port32(0) == 0 );
+S		ITM_Port8(0) = ch;
+S		}
+S	return( ch );
+S	}
+S
+Sunsigned int STM32_DEBUG_PRINT_MSG_NUMBER = 0;
+S
+N#endif

@@ -1,0 +1,12 @@
+bhd2 configuration\flash.o: ..\..\Src\flash\flash.c
+bhd2 configuration\flash.o: ..\..\Src\flash\flash.h
+bhd2 configuration\flash.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+bhd2 configuration\flash.o: ..\..\Drivers\CMSIS\Device\ST\STM32F2xx\Include\stm32f2xx.h
+bhd2 configuration\flash.o: ..\..\Drivers\CMSIS\Device\ST\STM32F2xx\Include\stm32f215xx.h
+bhd2 configuration\flash.o: ..\..\Drivers\CMSIS\Include\core_cm3.h
+bhd2 configuration\flash.o: ..\..\Drivers\CMSIS\Include\core_cmInstr.h
+bhd2 configuration\flash.o: ..\..\Drivers\CMSIS\Include\core_cmFunc.h
+bhd2 configuration\flash.o: ..\..\Drivers\CMSIS\Device\ST\STM32F2xx\Include\system_stm32f2xx.h
+bhd2 configuration\flash.o: ..\..\Drivers\STM32F2xx_HAL_Driver\Inc\stm32f2xx_hal_flash_ex.h
+bhd2 configuration\flash.o: ..\..\Drivers\STM32F2xx_HAL_Driver\Inc\stm32f2xx_hal_def.h
+bhd2 configuration\flash.o: ..\..\Drivers\STM32F2xx_HAL_Driver\Inc\stm32f2xx_hal_flash.h
