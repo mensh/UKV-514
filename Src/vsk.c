@@ -243,7 +243,7 @@ void Thread_Control  (void)
 				
 				if (Timer_VSK==0)
 				{	
-					if (RMS_1<0.15 || RMS_1>0.4) bit_vsk_1_kz_obriv=1;
+					if (RMS_1<0.05 || RMS_1>0.4) bit_vsk_1_kz_obriv=1;
 					//else bit_vsk_1_kz_obriv
 					RELE1_OFF;
 					State=4;
@@ -271,7 +271,7 @@ void Thread_Control  (void)
 				
 				if (Timer_VSK==0)
 				{
-					if (RMS_2<0.15 || RMS_2>0.29) bit_vsk_2_kz_obriv=1;
+					if (RMS_2<0.05 || RMS_2>0.29) bit_vsk_2_kz_obriv=1;
 					HAL_DAC_Stop(&hdac,DAC_CHANNEL_1);
 					RELE6_OFF;
 					RELE3_OFF;
